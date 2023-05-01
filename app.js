@@ -179,10 +179,10 @@ app.get("/states/:stateId/stats/", async (request, response) => {
   //   const resultReport = reportSnakeToCamel(stateReport);
   //   response.send(resultReport);
   response.send({
-    totalCases: state["SUM(cases)"],
-    totalCured: state["SUM(cured)"],
-    totalActive: state["SUM(active)"],
-    totalDeaths: state["SUM(deaths)"],
+    totalCases: stateReport["SUM(cases)"],
+    totalCured: stateReport["SUM(cured)"],
+    totalActive: stateReport["SUM(active)"],
+    totalDeaths: stateReport["SUM(deaths)"],
   });
 });
 
