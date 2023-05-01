@@ -14,7 +14,7 @@ const initializeDbAndServer = async () => {
       filename: dbPath,
       driver: sqlite3.Database,
     });
-    app.listen(3000, () => 
+    app.listen(3000, () =>
       console.log("Server Running at http://localhost:3000/")
     );
   } catch (error) {
@@ -24,7 +24,6 @@ const initializeDbAndServer = async () => {
 };
 
 initializeDbAndServer();
-
 
 const convertStateDbObjectToResponseObject = (dbObject) => {
   return {
@@ -55,7 +54,6 @@ const convertDistrictDbObjectToResponseObject = (dbObject) => {
 //   };
 // };
 
-
 //Returns list of all states in the state table
 
 app.get("/states/", async (request, response) => {
@@ -64,10 +62,12 @@ app.get("/states/", async (request, response) => {
     FROM state;
     `;
   const statesArray = await db.all(getStatesQuery);
-  response.send(statesArray.map((eachState) => 
-     convertStateDbObjectToResponseObject(eachState)
+  response.send(
+    statesArray.map((eachState) =>
+      convertStateDbObjectToResponseObject(eachState)
+    )
   );
-//   response.send(statesResult);
+  //   response.send(statesResult);
 });
 
 //Return a state based on the state ID
@@ -81,7 +81,7 @@ app.get("/states/:stateId/", async (request, response) => {
         state_id = ${stateId};
     `;
   const newState = await db.get(getStateQuery);
-//   const stateResult = convertStateDbObjectToResponseObject(newState);
+  //   const stateResult = convertStateDbObjectToResponseObject(newState);
   response.send(convertStateDbObjectToResponseObject(newState));
 });
 
@@ -95,24 +95,15 @@ app.get("/districts/:districtId/", async (request, response) => {
         WHERE district_id = ${districtId};
     `;
   const newDistrict = await db.get(getDistrict);
-//   const districtResult = convertDistrictDbObjectToResponseObject(newDistrict);
+  //   const districtResult = convertDistrictDbObjectToResponseObject(newDistrict);
   response.send(convertDistrictDbObjectToResponseObject(newDistrict));
 });
-
-
 
 //create a district in the district table
 
 app.post("/districts/", async (request, response) => {
-//   const createDistrict = request.body;
-  const {
-    districtName,
-    stateId,
-    cases,
-    cured,
-    active,
-    deaths,
-  } = request.body;
+  //   const createDistrict = request.body;
+  const { districtName, stateId, cases, cured, active, deaths } = request.body;
   const newDistrict = `
     INSERT INTO
         district(district_name,state_id,cases,cured,active,deaths)
@@ -124,12 +115,11 @@ app.post("/districts/", async (request, response) => {
          ${active},
          ${deaths});
     `;
-//   const addDistrict = 
-await db.run(newDistrict);
-//   const districtId = addDistrict.lastId;
+  //   const addDistrict =
+  await db.run(newDistrict);
+  //   const districtId = addDistrict.lastId;
   response.send("District Successfully Added");
 });
-
 
 //Deletes a district from district table based on district id
 
@@ -177,7 +167,8 @@ app.put("/districts/:districtId/", async (request, response) => {
 app.get("/states/:stateId/stats/", async (request, response) => {
   const { stateId } = request.params;
   const getStateReport = `
-    SELECT SUM(cases),
+    SELECT 
+        SUM(cases),
         SUM(cured) ,
         SUM(active),
         SUM(deaths)
@@ -185,19 +176,19 @@ app.get("/states/:stateId/stats/", async (request, response) => {
     WHERE state_id = ${stateId};
     `;
   const stateReport = await db.get(getStateReport);
-//   const resultReport = reportSnakeToCamel(stateReport);
-//   response.send(resultReport);
-    response.send({
-        totalCases: stats["SUM(cases)"],
-        totalCured: stats["SUM(cured)"],
-        totalActive: stats["SUM(active)"],
-        totalDeath: stats["SUM(deaths)"],
-    });
+  //   const resultReport = reportSnakeToCamel(stateReport);
+  //   response.send(resultReport);
+  response.send({
+    totalCases: state["SUM(cases)"],
+    totalCured: state["SUM(cured)"],
+    totalActive: state["SUM(active)"],
+    totalDeaths: state["SUM(deaths)"],
+  });
 });
 
 //Return a stateName based on district Id
 
-app.get("/districts/:districtId/details/", async (request.response) => {
+app.get("/districts/:districtId/details/", async (request, response) => {
   const { districtId } = request.params;
   const stateDetails = `
     SELECT state_name
